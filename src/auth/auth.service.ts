@@ -4,6 +4,7 @@ import { UserService } from 'src/user/user.service';
 import { compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 
+const EXPIRE_TIME = 20 * 1000; //20 seconds
 @Injectable()
 export class AuthService {
   constructor(
@@ -17,13 +18,14 @@ export class AuthService {
     return {
       user: userFound,
       access_token: await this.jwtService.signAsync(payload, {
-        expiresIn: '5m',
+        expiresIn: '20s',
         secret: process.env.JWT_SECRET_KEY,
       }),
       refresh_token: await this.jwtService.signAsync(payload, {
         expiresIn: '7d',
         secret: process.env.JWT_REFRESH_SECRET_KEY,
       }),
+      expiresIn: new Date().setTime(new Date().getTime() + EXPIRE_TIME),
     };
   }
 
@@ -47,13 +49,14 @@ export class AuthService {
 
     return {
       access_token: await this.jwtService.signAsync(payload, {
-        expiresIn: '5m',
+        expiresIn: '20s',
         secret: process.env.JWT_SECRET_KEY,
       }),
       refresh_token: await this.jwtService.signAsync(payload, {
         expiresIn: '7d',
         secret: process.env.JWT_REFRESH_SECRET_KEY,
       }),
+      expiresIn: new Date().setTime(new Date().getTime() + EXPIRE_TIME),
     };
   }
 }
